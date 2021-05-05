@@ -23,9 +23,9 @@ kubectl apply -f kafka-configmap.yaml
 # create directory to store Camel definitions
 mkdir -p /opt/sas/routes
 cd /opt/sas/routes
-
-# copy the [SyslogSocket.java](routes/SyslogSocket.java) file into the routes directory above
 ```
+
+- copy the [SyslogSocket.java](routes/SyslogSocket.java) file into the routes directory above
 
 - run the integration
 
