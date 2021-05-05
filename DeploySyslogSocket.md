@@ -1,23 +1,9 @@
 # Deploying Syslog Socket Adapter
 
 This assumes that the Kubernetes cluster is already up and running, and kubectl and kamel can successfully communicate with the cluster.
+This integration uses a kafka-config configmat that was created in a previous step. If you didn't do it, go back and create that now
 
-- create kafka configmap, updating with your broker info
-```
-cat <<EOF | tee kafka-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kafka-config
-data:
-  application.properties: |
-    kafka.brokers=BROKER1:9092,BROKER2:9092,BROKER3:9092
-EOF
-
-kubectl apply -f kafka-configmap.yaml
-```
-
-- create the integration configuration
+- Create the integration configuration
 
 ```
 # create directory to store Camel definitions
@@ -25,9 +11,9 @@ mkdir -p /opt/sas/routes
 cd /opt/sas/routes
 ```
 
-- copy the [SyslogSocket.java](routes/SyslogSocket.java) file into the routes directory above
+- Copy the [SyslogSocket.java](routes/SyslogSocket.java) file into the routes directory above
 
-- run the integration
+- Run the integration
 
 ```
 # if node-affitity is needed, enable its trait by setting:
@@ -62,6 +48,35 @@ kubectl expose deployment syslog-socket --port 514 --protocol UDP --type NodePor
 
 # get service info
 kubectl describe svc syslog-socket
+```
 
-# then you can send traffic to the designated integration ports
+- in the kafka broker, subscribe to the syslog-data topic
+```
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic syslog-data --group test-consumer
+```
+
+- now publish some data into the socket, using a node where the pod was scheduled to and the port you got from the service description
+```
+while (true); 
+do 
+ echo "<165>1 `date +'%Y-%m-%dT%H:%M:%S.%s'` mymachine.example.com evntslog - ID47 [exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"] BOMAn application event log entry..." | netcat -u -w0 lab-2 30022;
+ echo "<34>`LC_TIME=en_US.utf8 date +'%b %d %H:%M:%S'` mymachine su: 'su root' failed for lonvick on /dev/pts/8" | netcat -u -w0 lab-2 30022;
+done
+
+```
+
+- you should receive the messages in the kafka-console-consumer.sh terminal
+```
+0E09719D628327F-0000000000000000|LOCAL4|NOTICE|2021-05-05 18:57:27.162+0000|mymachine.example.com|BOMAn application event log entry...
+|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
+0E09719D628327F-0000000000000002|AUTH|CRIT|2021-05-05 19:01:12.965+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8
+
+0E09719D628327F-0000000000000003|AUTH|CRIT|2021-05-05 19:01:15.990+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8
+
+0E09719D628327F-0000000000000004|AUTH|CRIT|2021-05-05 19:01:23.652+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8
+
+0E09719D628327F-0000000000000006|LOCAL4|NOTICE|2021-05-05 19:01:35.162+0000|mymachine.example.com|BOMAn application event log entry...
+|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
+0E09719D628327F-0000000000000007|LOCAL4|NOTICE|2021-05-05 19:01:36.162+0000|mymachine.example.com|BOMAn application event log entry...
+|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
 ```

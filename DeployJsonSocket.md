@@ -1,11 +1,9 @@
 # Deploying Json Socket Adapter
 
 This assumes that the Kubernetes cluster is already up and running, and kubectl and kamel can successfully communicate with the cluster.
+This integration uses a kafka-config configmat that was created in a previous step. If you didn't do it, go back and create that now
 
-- this integration uses a kafka-configmap that was created in the first deployed integration
- If you didn't do it, go back and create that now
-
-- create the integration configuration
+- Create the integration configuration
 
 ```
 # create directory to store Camel definitions
@@ -13,9 +11,9 @@ mkdir -p /opt/sas/routes
 cd /opt/sas/routes
 ```
 
-- copy the [JsonSocket.java](routes/JsonSocket.java) file into the routes directory above
+- Copy the [JsonSocket.java](routes/JsonSocket.java) file into the routes directory above
 
-- run the integration
+- Run the integration
 
 ```
 # if node-affitity is needed, enable its trait by setting:
@@ -50,6 +48,37 @@ kubectl expose deployment json-socket --port 5514 --protocol TCP --type NodePort
 
 # get service info
 kubectl describe svc json-socket
+```
 
-# then you can send traffic to the designated integration ports
+- in the kafka broker, subscribe to the json-data topic
+```
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic json-data --group test-consumer
+```
+
+- now publish some data into the socket, using a node where the pod was scheduled to and the port you got from the service description
+```
+while (true);
+do
+ echo "{\"field1\": \"foo\", \"field2\": \"bar\", \"field3\": \"`date +'%Y-%m-%dT%H:%M:%S.%s'`\"}" | netcat -N lab-3 31208;
+done
+```
+
+- you should receive the messages in the kafka-console-consumer.sh terminal
+```
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
+{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
 ```
