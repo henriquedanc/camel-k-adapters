@@ -9,7 +9,7 @@ public class JsonSocket extends RouteBuilder {
           .to("direct:toKafka");
 
          from("direct:toKafka")
-           .to("kafka:syslog-data?brokers={{kafka.brokers}}")
+           .to("kafka:json-data?brokers={{kafka.brokers}}")
            .to("log:toKafka?groupActiveOnly=true&groupDelay=30000&groupInterval=30000");
 
     }
