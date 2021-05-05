@@ -24,7 +24,7 @@ kubectl apply -f kafka-configmap.yaml
 mkdir -p /opt/sas/routes
 cd /opt/sas/routes
 
-# copy the SyslogSocket.java file into the routes directory above
+# copy the [SyslogSocket.java](routes/SyslogSocket.java) file into the routes directory above
 ```
 
 - run the integration
