@@ -5,4 +5,6 @@ These are step-by-step instructions on how to install and run Apache Camel integ
 Please execute the following, in order:
 
 [Install Kamel](InstallKamel.md)  
+[Configure Kafka](ConfigureKafka.md)  
+[Deploy JSON Socket](DeployJsonSocket.md)  
 [Deploy Syslog Socket](DeploySyslogSocket.md)  
