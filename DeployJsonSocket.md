@@ -1,7 +1,7 @@
 # Deploying Json Socket Adapter
 
 This assumes that the Kubernetes cluster is already up and running, and kubectl and kamel can successfully communicate with the cluster.
-This integration uses a kafka-config configmat that was created in a previous step. If you didn't do it, go back and create that now
+This integration uses a kafka-config configmap that was created in a previous step. If you didn't do it, go back and create that now
 
 - Create the integration configuration
 
@@ -55,20 +55,18 @@ kubectl describe svc json-socket
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic json-data --group test-consumer
 ```
 
-- now publish some data into the socket, using a node where the pod was scheduled to and the port you got from the service description
+- now publish some data into the socket, through a node where the pod was scheduled to and the nodeport you got from the service description
 ```
+NODE=lab-2
+NODEPORT=31208
 while (true);
 do
- echo "{\"field1\": \"foo\", \"field2\": \"bar\", \"field3\": \"`date +'%Y-%m-%dT%H:%M:%S.%s'`\"}" | netcat -N lab-3 31208;
+ echo "{\"field1\": \"foo\", \"field2\": \"bar\", \"field3\": \"`date +'%Y-%m-%dT%H:%M:%S.%s'`\"}" | netcat -N $NODE $NODEPORT;
 done
 ```
 
 - you should receive the messages in the kafka-console-consumer.sh terminal
 ```
-{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
-{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
-{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
-{"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
 {"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
 {"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
 {"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}

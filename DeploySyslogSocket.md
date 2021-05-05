@@ -1,7 +1,7 @@
 # Deploying Syslog Socket Adapter
 
 This assumes that the Kubernetes cluster is already up and running, and kubectl and kamel can successfully communicate with the cluster.
-This integration uses a kafka-config configmat that was created in a previous step. If you didn't do it, go back and create that now
+This integration uses a kafka-config configmap that was created in a previous step. If you didn't do it, go back and create that now
 
 - Create the integration configuration
 
@@ -55,12 +55,14 @@ kubectl describe svc syslog-socket
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic syslog-data --group test-consumer
 ```
 
-- now publish some data into the socket, using a node where the pod was scheduled to and the port you got from the service description
+- now publish some data into the socket, through a node where the pod was scheduled to and the nodeport you got from the service description
 ```
+NODE=lab-2
+NODEPORT=30022
 while (true); 
 do 
- echo "<165>1 `date +'%Y-%m-%dT%H:%M:%S.%s'` mymachine.example.com evntslog - ID47 [exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"] BOMAn application event log entry..." | netcat -u -w0 lab-2 30022;
- echo "<34>`LC_TIME=en_US.utf8 date +'%b %d %H:%M:%S'` mymachine su: 'su root' failed for lonvick on /dev/pts/8" | netcat -u -w0 lab-2 30022;
+ echo "<165>1 `date +'%Y-%m-%dT%H:%M:%S.%s'` mymachine.example.com evntslog - ID47 [exampleSDID@32473 iut=\"3\" eventSource=\"Application\" eventID=\"1011\"] BOMAn application event log entry..." | netcat -u -w0 $NODE $NODEPORT;
+ echo "<34>`LC_TIME=en_US.utf8 date +'%b %d %H:%M:%S'` mymachine su: 'su root' failed for lonvick on /dev/pts/8" | netcat -u -w0 $NODE $NODEPORT;
 done
 
 ```
@@ -79,4 +81,31 @@ done
 |evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
 0E09719D628327F-0000000000000007|LOCAL4|NOTICE|2021-05-05 19:01:36.162+0000|mymachine.example.com|BOMAn application event log entry...
 |evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
+```
+
+- another possible test with loggen
+```
+# install syslog-ng
+sudo yum install syslog-ng
+
+# run loggen
+```
+loggen -i -D -I 60 -P -p "[test id=\"foo\" val=\"bar\"][test2 id=\"foo2\" val=\"bar2\"][test3 id=\"foo3\" val=\"bar3\"]" $NODE $NODEPORT
+```
+
+- you should receive the messages in the kafka-console-consumer.sh terminal
+```
+4DA09F269B0EF3F-000000000027BED2|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056755, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
+|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
+4DA09F269B0EF3F-000000000027BED3|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056756, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
+|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
+4DA09F269B0EF3F-000000000027BED4|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056757, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
+|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
+4DA09F269B0EF3F-000000000027BED6|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056759, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
+|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
+4DA09F269B0EF3F-000000000027BED5|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056758, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
+|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
+4DA09F269B0EF3F-000000000027BED7|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056760, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
+|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
+4DA09F269B0EF3F-000000000027BED8|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056761, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
 ```

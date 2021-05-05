@@ -2,13 +2,13 @@
 
 This assumes that Kafka cluster is up and running
 
-- in your Kafka cluster, create the topics that will be used (start with 10 partitions per topic, optimal number will have to be defined during testing)
+- in your Kafka cluster, create the topics that will be used (start with 10 partitions per topic, optimal number will have to be defined during load tests)
 ```
 # create topics
 #cd KAFKA_DIR
 bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic syslog-data  --partitions 10 --replication-factor 1
 bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic json-data --partitions 10 --replication-factor 1
-bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic snmp-data --create --partitions 10 --replication-factor 1
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic snmp-data --partitions 10 --replication-factor 1
 
 # check
 bin/kafka-topics.sh --bootstrap-server localhost:9092 --list

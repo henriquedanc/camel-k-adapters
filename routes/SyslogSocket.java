@@ -23,7 +23,7 @@ public class SyslogSocket extends RouteBuilder {
         	   .to("direct:toKafka");
         	  
         	 from("direct:rfc3164")
-        	   .setBody().simple("${exchangeId}|${body.facility}|${body.severity}|${date:header.syslogTimestamp:YYYY-MM-dd HH:mm:ss.SSSZ}|${body.hostname}|${body.logMessage}")
+        	   .setBody().simple("${exchangeId}|${body.facility}|${body.severity}|${date:header.syslogTimestamp:YYYY-MM-dd HH:mm:ss.000+0000}|${body.hostname}|${body.logMessage}")
         	   .to("log:rfc3164?groupActiveOnly=true&groupDelay=30000&groupInterval=30000")
         	   .to("direct:toKafka");
         	  
