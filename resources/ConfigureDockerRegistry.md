@@ -22,9 +22,8 @@ cd /opt/sas/resources
 # just change the class in the PVC definition and create it.
 kubectl apply -f docker-registry-pv-volume.yaml
 kubectl apply -f docker-registry-pv-claim.yaml
-kubectl apply -f docker-registry-pv-deployment.yaml
+kubectl apply -f docker-registry-deployment.yaml
 
-kubectl expose deployment docker-registry --type=ClusterIP --port=5000 --target-port=5000 --name=docker-registry
 # get service IP
 kubectl describe svc docker-registry
 ```
