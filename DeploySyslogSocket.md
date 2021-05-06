@@ -50,12 +50,12 @@ kubectl expose deployment syslog-socket --port 514 --protocol UDP --type NodePor
 kubectl describe svc syslog-socket
 ```
 
-- in the kafka broker, subscribe to the syslog-data topic
+- In the kafka broker, subscribe to the syslog-data topic
 ```
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic syslog-data --group test-consumer
 ```
 
-- now publish some data into the socket, through a node where the pod was scheduled to and the nodeport you got from the service description
+- Now publish some data into the socket, through a node where the pod was scheduled to and the nodeport you got from the service description
 ```
 NODE=lab-2
 NODEPORT=30022
@@ -67,45 +67,33 @@ done
 
 ```
 
-- you should receive the messages in the kafka-console-consumer.sh terminal
+- You should receive the messages in the kafka-console-consumer.sh terminal
 ```
-0E09719D628327F-0000000000000000|LOCAL4|NOTICE|2021-05-05 18:57:27.162+0000|mymachine.example.com|BOMAn application event log entry...
-|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
-0E09719D628327F-0000000000000002|AUTH|CRIT|2021-05-05 19:01:12.965+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8
-
-0E09719D628327F-0000000000000003|AUTH|CRIT|2021-05-05 19:01:15.990+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8
-
-0E09719D628327F-0000000000000004|AUTH|CRIT|2021-05-05 19:01:23.652+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8
-
-0E09719D628327F-0000000000000006|LOCAL4|NOTICE|2021-05-05 19:01:35.162+0000|mymachine.example.com|BOMAn application event log entry...
-|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
-0E09719D628327F-0000000000000007|LOCAL4|NOTICE|2021-05-05 19:01:36.162+0000|mymachine.example.com|BOMAn application event log entry...
-|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
+A6574D304CCABAD-00000000000003FC|LOCAL4|NOTICE|2021-05-06 12:41:12.162+0000|mymachine.example.com|BOMAn application event log entry...|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
+A6574D304CCABAD-00000000000003FD|AUTH|CRIT|2021-05-06 12:41:12.000+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8||||
+A6574D304CCABAD-00000000000003FE|LOCAL4|NOTICE|2021-05-06 12:41:12.162+0000|mymachine.example.com|BOMAn application event log entry...|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
+A6574D304CCABAD-00000000000003FF|AUTH|CRIT|2021-05-06 12:41:12.000+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8||||
+A6574D304CCABAD-0000000000000400|LOCAL4|NOTICE|2021-05-06 12:41:12.162+0000|mymachine.example.com|BOMAn application event log entry...|evntslog|-|ID47|[exampleSDID@32473 iut="3" eventSource="Application" eventID="1011"]
+A6574D304CCABAD-00000000000003FF|AUTH|CRIT|2021-05-06 12:41:12.000+0000|mymachine|su: 'su root' failed for lonvick on /dev/pts/8||||
 ```
 
-- another possible test with loggen
+- Another possible test with loggen
 ```
 # install syslog-ng
 sudo yum install syslog-ng
+```
 
 # run loggen
 ```
-loggen -i -D -I 60 -P -p "[test id=\"foo\" val=\"bar\"][test2 id=\"foo2\" val=\"bar2\"][test3 id=\"foo3\" val=\"bar3\"]" $NODE $NODEPORT
+loggen -i -D -I 60 -P -p "[fooSDID@32474 iut=\"4\" eventSource=\"Port\" eventID=\"99\"][barSDID@32475 eventSource=\"Rack\" eventID=\"88\"]" $NODE $NODEPORT
 ```
 
 - you should receive the messages in the kafka-console-consumer.sh terminal
 ```
-4DA09F269B0EF3F-000000000027BED2|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056755, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
-|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
-4DA09F269B0EF3F-000000000027BED3|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056756, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
-|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
-4DA09F269B0EF3F-000000000027BED4|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056757, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
-|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
-4DA09F269B0EF3F-000000000027BED6|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056759, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
-|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
-4DA09F269B0EF3F-000000000027BED5|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056758, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
-|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
-4DA09F269B0EF3F-000000000027BED7|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056760, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
-|prg00000|1234|-|[test id="foo" val="bar"][test2 id="foo2" val="bar2"][test3 id="foo3" val="bar3"]
-4DA09F269B0EF3F-000000000027BED8|AUTH|INFO|2021-05-05 19:16:36.000+0000|localhost|ï»¿seq: 0000056761, thread: 0000, runid: 1620249336, stamp: 2021-05-05T21:16:36 PADDPADDPADDPADDPADDPADDPADDPADDPAD
+A6574D304CCABAD-000000000000DEA5|AUTH|INFO|2021-05-06 10:43:06.000+0000|localhost|ï»¿seq: 0000056724, thread: 0000, runid: 1620304926, stamp: 2021-05-06T12:43:06 PADDPADDPADDPA|prg00000|1234|-|[fooSDID@32474 iut="4" eventSource="Port" eventID="99"][barSDID@32475 eventSource="Rack" eventID="88"]
+A6574D304CCABAD-000000000000DEA6|AUTH|INFO|2021-05-06 10:43:06.000+0000|localhost|ï»¿seq: 0000056725, thread: 0000, runid: 1620304926, stamp: 2021-05-06T12:43:06 PADDPADDPADDPA|prg00000|1234|-|[fooSDID@32474 iut="4" eventSource="Port" eventID="99"][barSDID@32475 eventSource="Rack" eventID="88"]
+A6574D304CCABAD-000000000000DEA7|AUTH|INFO|2021-05-06 10:43:06.000+0000|localhost|ï»¿seq: 0000056726, thread: 0000, runid: 1620304926, stamp: 2021-05-06T12:43:06 PADDPADDPADDPA|prg00000|1234|-|[fooSDID@32474 iut="4" eventSource="Port" eventID="99"][barSDID@32475 eventSource="Rack" eventID="88"]
+A6574D304CCABAD-000000000000DEA8|AUTH|INFO|2021-05-06 10:43:06.000+0000|localhost|ï»¿seq: 0000056727, thread: 0000, runid: 1620304926, stamp: 2021-05-06T12:43:06 PADDPADDPADDPA|prg00000|1234|-|[fooSDID@32474 iut="4" eventSource="Port" eventID="99"][barSDID@32475 eventSource="Rack" eventID="88"]
+A6574D304CCABAD-000000000000DEA9|AUTH|INFO|2021-05-06 10:43:06.000+0000|localhost|ï»¿seq: 0000056728, thread: 0000, runid: 1620304926, stamp: 2021-05-06T12:43:06 PADDPADDPADDPA|prg00000|1234|-|[fooSDID@32474 iut="4" eventSource="Port" eventID="99"][barSDID@32475 eventSource="Rack" eventID="88"]
+A6574D304CCABAD-000000000000DEAA|AUTH|INFO|2021-05-06 10:43:06.000+0000|localhost|ï»¿seq: 0000056729, thread: 0000, runid: 1620304926, stamp: 2021-05-06T12:43:06 PADDPADDPADDPA|prg00000|1234|-|[fooSDID@32474 iut="4" eventSource="Port" eventID="99"][barSDID@32475 eventSource="Rack" eventID="88"]
 ```

@@ -50,12 +50,12 @@ kubectl expose deployment json-socket --port 5514 --protocol TCP --type NodePort
 kubectl describe svc json-socket
 ```
 
-- in the kafka broker, subscribe to the json-data topic
+- In the kafka broker, subscribe to the json-data topic
 ```
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic json-data --group test-consumer
 ```
 
-- now publish some data into the socket, through a node where the pod was scheduled to and the nodeport you got from the service description
+- Now publish some data into the socket, through a node where the pod was scheduled to and the nodeport you got from the service description
 ```
 NODE=lab-2
 NODEPORT=31208
@@ -65,7 +65,7 @@ do
 done
 ```
 
-- you should receive the messages in the kafka-console-consumer.sh terminal
+- You should receive the messages in the kafka-console-consumer.sh terminal
 ```
 {"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}
 {"field1": "foo", "field2": "bar", "field3": "2021-05-05T18:48:39.1620240519"}

@@ -2,7 +2,7 @@
 
 This assumes that Kafka cluster is up and running
 
-- in your Kafka cluster, create the topics that will be used (start with 10 partitions per topic, optimal number will have to be defined during load tests)
+- In your Kafka cluster, create the topics that will be used (start with 10 partitions per topic, optimal number will have to be defined during load tests)
 ```
 # create topics
 #cd KAFKA_DIR
@@ -17,7 +17,7 @@ bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic json-da
 bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic snmp-data
 ```
 
-- in your K8S cluster, create a configmap for camel with kafka broker information, updating with your broker info
+- In your K8S cluster, create a configmap for camel with kafka broker information, updating with your broker info
 ```
 cat <<EOF | tee kafka-configmap.yaml
 apiVersion: v1

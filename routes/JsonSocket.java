@@ -24,10 +24,10 @@ public class JsonSocket extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-       bindToRegistry("dlmDec", getDlmDecoder());
-       bindToRegistry("strDec", strDec);
+        bindToRegistry("dlmDec", getDlmDecoder());
+        bindToRegistry("strDec", strDec);
 
-       from("netty://tcp://0.0.0.0:5514?sync=false&decoders=#dlmDec,#strDec")
+       from("netty:tcp://0.0.0.0:5514?sync=false&decoders=#dlmDec,#strDec")
         .to("log:socket?groupActiveOnly=true&groupDelay=30000&groupInterval=30000")
         .to("direct:toKafka");
 
