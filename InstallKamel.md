@@ -30,10 +30,15 @@ Below is an example, but all the following options can be used
       --registry-insecure                   Configure to configure registry access in insecure mode or not
       --registry-secret string              A secret used to push/pull images to the Docker registry
 
-
 ```
-# example, specify you specific registry info
+# example, specify your specific registry info
 kamel install --registry HOST:PORT --registry-auth-username USER --registry-auth-password PASS
+```
+
+If you don't have a registry available, you can follow instructions [here](resources/ConfigureDockerRegistry.md) on how to quickly deploy one.
+Then, after you configure it, the command to deploy Kamel would be:
+```
+kamel install --registry REGISTRY_SERVICE_IP:5000 --registry-insecure
 ```
 
 - run a simple integration
