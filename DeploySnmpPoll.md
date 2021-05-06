@@ -49,7 +49,7 @@ SNMP_COMMUNITY=public
 SNMP_DELAY=200 # poll every 200ms
 SNMP_TIMEOUT=1000 # 1s timeout
 
-kamel run --name snmp-poll-$SNMP_NAME --property snmp.hostport=$SNMP_HOST:$SNMP_PORT --property snmp.oids="$SNMP_OIDS" --property snmp.version=$SNMP_VERSION --property snmp.community=$SNMP_COMMUNITY --property snmp.delay="$SNMP_DELAY" --property snmp.timeout=$SNMP_TIMEOUT -d mvn:javax.xml.bind:jaxb-api:2.3.1 -d mvn:com.sun.xml.bind:jaxb-core:2.3.0.1 -d mvn:com.sun.xml.bind:jaxb-impl:2.3.2 -d camel-snmp -d camel-saxon -d camel-kafka --trait affinity.enabled=false --trait affinity.node-affinity-labels=netspeed=40g --trait toleration.enabled=true --trait toleration.taints="netspeed=40g:NoSchedule" --configmap=kafka-config --trait jvm.options="-Xms2048m -Xmx2048m" --trait container.request-cpu=1000m --trait container.request-memory=2048Mi SnmpPoll.java
+kamel run --name snmp-poll-$SNMP_NAME --property snmp.hostport=$SNMP_HOST:$SNMP_PORT --property snmp.oids="$SNMP_OIDS" --property snmp.version=$SNMP_VERSION --property snmp.community=$SNMP_COMMUNITY --property snmp.delay=$SNMP_DELAY --property snmp.timeout=$SNMP_TIMEOUT -d mvn:javax.xml.bind:jaxb-api:2.3.1 -d mvn:com.sun.xml.bind:jaxb-core:2.3.0.1 -d mvn:com.sun.xml.bind:jaxb-impl:2.3.2 -d camel-snmp -d camel-saxon -d camel-kafka --trait affinity.enabled=false --trait affinity.node-affinity-labels=netspeed=40g --trait toleration.enabled=true --trait toleration.taints="netspeed=40g:NoSchedule" --configmap=kafka-config --trait jvm.options="-Xms2048m -Xmx2048m" --trait container.request-cpu=1000m --trait container.request-memory=2048Mi SnmpPoll.java
 
 # get status
 kamel get snmp-poll-$SNMP_NAME
