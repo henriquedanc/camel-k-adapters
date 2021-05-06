@@ -5,12 +5,12 @@ This is a quick way of creating an insecure registry, and should be used only fo
 This assumes that your K8S cluster is up and running.
 
 - In your K8S cluster, copy the required files
-
-# create directory to store Camel definitions
 ```
+# create directory to store Camel definitions
 mkdir -p /opt/sas/resources
 cd /opt/sas/resources
 ```
+
 - Copy the following files nto the resources directory above
 -- [docker-registry-pv-volume.yaml](docker-registry-pv-volume.yaml)
 -- [docker-registry-pv-claim.yaml](docker-registry-pv-claim.yaml)
