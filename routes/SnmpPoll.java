@@ -12,7 +12,6 @@ public class SnmpPoll extends RouteBuilder {
          .to("log:snmpEntry?groupActiveOnly=true&groupDelay=30000&groupInterval=30000")
          .setBody().xquery("concat(/entry/oid, \"|\", /entry/value)", String.class)
          .setBody().simple("${exchangeId}|${body}|${header.pollTimestamp}")
-         .to("log:snmpSplitted?groupActiveOnly=true&groupDelay=30000&groupInterval=30000")
          .to("direct:toKafka");
          
         from("direct:toKafka")
