@@ -11,7 +11,7 @@ mkdir -p /opt/sas/resources
 cd /opt/sas/resources
 ```
 
-- Copy the following files nto the resources directory above  
+- Copy the following files into the resources directory above  
 [docker-registry-pv-volume.yaml](docker-registry-pv-volume.yaml)  
 [docker-registry-pv-claim.yaml](docker-registry-pv-claim.yaml)  
 [docker-registry-deployment.yaml](docker-registry-deployment.yaml)  
@@ -19,9 +19,11 @@ cd /opt/sas/resources
 - Create resources
 ```
 # if you have dynamic volume provisioning enabled in the cluster, you don't need to create the volume.
-# just change the class in the PVC definition and create it.
+# in this case, skip the volume creation
 kubectl apply -f docker-registry-pv-volume.yaml
+# and then change the class in the PVC definition before creating it
 kubectl apply -f docker-registry-pv-claim.yaml
+
 kubectl apply -f docker-registry-deployment.yaml
 
 # get service IP
