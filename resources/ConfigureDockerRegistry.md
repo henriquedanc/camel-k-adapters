@@ -4,9 +4,10 @@ You only need to do this if you don't have an available registry that can be use
 This is a quick way of creating an insecure registry, and should be used only for test purposes.
 This assumes that your K8S cluster is up and running.
 
-- In your K8S cluster, copy the required ffiles
+- In your K8S cluster, copy the required files
 
 # create directory to store Camel definitions
+```
 mkdir -p /opt/sas/resources
 cd /opt/sas/resources
 ```
@@ -15,7 +16,7 @@ cd /opt/sas/resources
 -- [docker-registry-pv-claim.yaml](docker-registry-pv-claim.yaml)
 -- [docker-registry-deployment.yaml](docker-registry-deployment.yaml)
 
-- create resources
+- Create resources
 ```
 # if you have dynamic volume provisioning enabled in the cluster, you don't need to create the volume.
 # just change the class in the PVC definition and create it.
@@ -28,7 +29,7 @@ kubectl expose deployment docker-registry --type=ClusterIP --port=5000 --target-
 kubectl describe svc docker-registry
 ```
 
-- edit docker daemon settings (on all cluster nodes) to allow pulling images from our insecure repo, and restart it
+- Edit docker daemon settings (on all cluster nodes) to allow pulling images from our insecure repo, and restart it
 ```
 # edit the /etc/docker/daemon.json file, adding the following line
 # "insecure-registries" : ["REGISTRY_SERVICE_IP:5000"]
