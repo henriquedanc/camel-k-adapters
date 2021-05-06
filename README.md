@@ -8,3 +8,4 @@ Please execute the following, in order:
 [Configure Kafka](ConfigureKafka.md)  
 [Deploy JSON Socket](DeployJsonSocket.md)  
 [Deploy Syslog Socket](DeploySyslogSocket.md)  
+[Deploy SNMP Poll](DeploySnmpPoll.md)  
