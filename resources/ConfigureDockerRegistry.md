@@ -11,10 +11,10 @@ mkdir -p /opt/sas/resources
 cd /opt/sas/resources
 ```
 
-- Copy the following files nto the resources directory above
--- [docker-registry-pv-volume.yaml](docker-registry-pv-volume.yaml)
--- [docker-registry-pv-claim.yaml](docker-registry-pv-claim.yaml)
--- [docker-registry-deployment.yaml](docker-registry-deployment.yaml)
+- Copy the following files nto the resources directory above  
+[docker-registry-pv-volume.yaml](docker-registry-pv-volume.yaml)  
+[docker-registry-pv-claim.yaml](docker-registry-pv-claim.yaml)  
+[docker-registry-deployment.yaml](docker-registry-deployment.yaml)  
 
 - Create resources
 ```
