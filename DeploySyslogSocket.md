@@ -55,7 +55,7 @@ kubectl describe svc syslog-socket
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic syslog-data --group test-consumer
 ```
 
-- Now publish some data into the socket
+- Now publish some data into the socket  
   If you used NodePort service type above, you can use any node as the target. Just use the node port you got from the service description.
 ```
 NODE=lab-2
