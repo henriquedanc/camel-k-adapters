@@ -55,9 +55,10 @@ kubectl describe svc json-socket
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic json-data --group test-consumer
 ```
 
-- Now publish some data into the socket, through a node where the pod was scheduled to and the nodeport you got from the service description
+- Now publish some data into the socket
+  If you used NodePort service type above, you can use any node as the target. Just use the node port you got from the service description.
 ```
-NODE=lab-2
+NODE=lab-1
 NODEPORT=31208
 while (true);
 do
